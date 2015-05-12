@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from itertools import repeat
+import os
 import os.path
 from os.path import isfile, join
 import errno
@@ -38,3 +39,22 @@ def process_file(file, search_path=None, filename=None):
 		with open(file) as f:
 			file = f.read()
 	return process(file, search_path=search_path, filename=filename)
+
+
+if __name__ == "__main__":
+	from argparse import ArgumentParser
+
+	parser = ArgumentParser()
+	parser.add_argument("input", help="Input GLSL file")
+	parser.add_argument("--search-path", default=os.getcwd(), help="Paths used for searching for includes (default: current working directory)")
+	parser.add_argument("--output", help="Output GLSL file")
+
+	args = parser.parse_args()
+
+	glsl = process_file(args.input, search_path=args.search_path)
+
+	if args.output:
+		with open(args.output, "w") as f:
+			f.write(glsl)
+	else:
+		print(glsl)
