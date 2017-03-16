@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from itertools import repeat
+from itertools import repeat, product
 import os
 import os.path
 from os.path import isfile, join
 import errno
 import re
+
+
+_file_extensions = "", ".glsl", ".vert", ".tesc", ".tese", ".geom", ".frag", ".comp"
 
 
 def process(string, search_path=None, filename=None):
@@ -24,7 +27,7 @@ def process(string, search_path=None, filename=None):
 
 	def include(match):
 		include_name = match.group(1)
-		include_filename = next(filter(isfile, map(join, search_path, repeat(include_name))), None)
+		include_filename = next(filter(isfile, (filename + ext for ext, filename in product(_file_extensions, map(join, search_path, repeat(include_name))))), None)
 		if include_filename is None:
 			raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), include_name)
 		return process_file(include_filename, search_path=[os.path.dirname(include_filename)] + search_path)
