@@ -12,6 +12,10 @@ import re
 _file_extensions = "", ".glsl", ".vert", ".tesc", ".tese", ".geom", ".frag", ".comp"
 
 
+def _remove_version_directives(string):
+	return re.sub(r"^[ \t]*#[ \t]*version[ \t]+.*?$", "", string, flags=re.MULTILINE)
+
+
 def process(string, search_path=None, filename=None):
 	if isinstance(search_path, str):
 		search_path = list(filter(None, map(str.strip, search_path.split(";"))))
@@ -30,7 +34,7 @@ def process(string, search_path=None, filename=None):
 		include_filename = next(filter(isfile, (filename + ext for ext, filename in product(_file_extensions, map(join, search_path, repeat(include_name))))), None)
 		if include_filename is None:
 			raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), include_name)
-		return process_file(include_filename, search_path=[os.path.dirname(include_filename)] + search_path)
+		return _remove_version_directives(process_file(include_filename, search_path=[os.path.dirname(include_filename)] + search_path))
 
 	return re.sub(r"^[ \t]*#[ \t]*include[ \t]+\"([^\"]*)\"", include, string, flags=re.MULTILINE)
 
