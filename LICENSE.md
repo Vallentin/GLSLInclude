@@ -1,5 +1,5 @@
 
-Copyright (c) 2015 Christian Vallentin
+Copyright (c) 2015-2018 Christian Vallentin
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
